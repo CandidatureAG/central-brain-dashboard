@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Central Brain - Dashboard</title>
+  <style>
+    :root {
+      --green: #2e8b57;
+      --green-dark: #256b43;
+      --bg-light: #f9f9f9;
+      --text-dark: #1a1a1a;
+      --border-color: #ccc;
+      --status-on: #3bd671;
+      --status-off: #e06666;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #ffffff;
+      color: var(--text-dark);
+      margin: 0;
+      display: flex;
+    }
+    .sidebar-toggle {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: var(--green);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      z-index: 1000;
+    }
+    aside {
+      width: 240px;
+      background-color: var(--green);
+      color: white;
+      height: 100vh;
+      padding: 40px 20px 20px 20px; /* ajout de 40px en haut pour espacer du bouton */
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.3s ease;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+    aside.hidden {
+      transform: translateX(-100%);
+    }
+    aside h2 {
+      margin-top: 0;
+      font-size: 22px;
+      padding-bottom: 8px;
+    }
+    aside nav {
+      flex: 1;
+      margin-top: 20px; /* descendre la navigation */
+    }
+    aside nav a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      padding: 10px 12px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      font-weight: 500;
+      transition: background 0.2s ease;
+    }
+    aside nav a:hover,
+    aside nav a.active {
+      background-color: var(--green-dark);
+    }
+    aside .bottom-links {
+      font-size: 13px;
+      opacity: 0.8;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      margin-left: 240px;
+      transition: margin-left 0.3s ease;
+      min-height: 100vh;
+    }
+    main.full {
+      margin-left: 0;
+    }
+    header {
+      background-color: var(--green);
+      padding: 20px;
+      text-align: center;
+      border-bottom: 2px solid var(--green-dark);
+      animation: slide-in 0.6s ease-out;
+    }
+    @keyframes slide-in {
+      from { transform: translateY(-100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      color: #fff;
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(370px, 1fr));
+      gap: 24px;
+      padding: 30px;
+      background-color: var(--bg-light);
+      flex: 1;
+      min-height: 100%;
+    }
+    .card {
+      background-color: #fff;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+    .card h2 {
+      margin-top: 0;
+      font-size: 22px;
+      color: var(--green);
+      margin-bottom: 16px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 10px 16px;
+      margin-top: 8px;
+      margin-right: 10px;
+      background-color: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      text-transform: uppercase;
+      transition: background-color 0.2s ease;
+    }
+    .btn:hover {
+      background-color: var(--green-dark);
+    }
+    .status {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+    .on { background-color: var(--status-on); }
+    .off { background-color: var(--status-off); }
+    .stats {
+      font-size: 15px;
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+    .logs {
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 13px;
+      background: #eeeeee;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+    footer {
+      text-align: center;
+      padding: 12px;
+      font-size: 13px;
+      color: #666;
+      background-color: #f2f2f2;
+      border-top: 1px solid #ddd;
+    }
+  </style>
+</head>
+<body>
+  <button class="sidebar-toggle" onclick="toggleSidebar()">☰ Menu</button>
+  <aside id="sidebar">
+    <div>
+      <h2>🧭 Navigation</h2>
+      <nav>
+        <a href="#" class="active">Mails entrants</a>
+        <a href="#">Candidatures</a>
+        <a href="#">Statistiques</a>
+        <a href="#"> Contrôle agents</a>
+        <a href="#">Journal</a>
+      </nav>
+    </div>
+    <div class="bottom-links">
+      Central Brain 1.0<br>
+      ⓒ Erwann • 2025
+    </div>
+  </aside>
+  <main id="main">
+    <header>
+      <h1>Central Brain - Tableau de Bord Global</h1>
+    </header>
+    <div class="dashboard">
+      <div class="card">
+        <h2>Mails entrants</h2>
+        <p class="stats">
+          Aujourd'hui : <strong>18</strong><br>
+          Non lus : <strong>6</strong><br>
+          En attente : <strong>3</strong>
+        </p>
+        <button class="btn">Analyser les mails</button>
+        <button class="btn">Voir les mails urgents</button>
+      </div>
+
+      <div class="card">
+        <h2>Candidatures</h2>
+        <p class="stats">
+          Aujourd'hui : <strong>12</strong><br>
+          Bons profils : <strong>7</strong><br>
+          Invitations envoyées : <strong>5</strong>
+        </p>
+        <button class="btn">Lancer Matching</button>
+        <button class="btn">Voir profils en attente</button>
+      </div>
+
+      <div class="card">
+        <h2>Statistiques Système</h2>
+        <p class="stats">
+          Contenus publiés : <strong>2</strong><br>
+          Agents déclenchés : <strong>14</strong><br>
+          Erreurs détectées : <strong>0</strong>
+        </p>
+        <button class="btn">Analyser les performances</button>
+        <button class="btn">Exporter les stats</button>
+      </div>
+
+      <div class="card">
+        <h2>🎛️ Contrôle Agents</h2>
+        <button class="btn">Relancer Rédacteur</button>
+        <button class="btn">Déclencher Accompagnement</button>
+        <button class="btn">Forcer Analyse Stats</button>
+        <button class="btn">Arrêter Agent Analyse</button>
+      </div>
+
+      <div class="card">
+        <h2>🧾 Journal des Activités</h2>
+        <div class="logs">
+          <p>[10:01] ✅ Article publié : "Pourquoi automatiser les relances ?"</p>
+          <p>[09:44] ✅ Mail analysé : "Candidature BTS GPME"</p>
+          <p>[09:18] ✅ Relance entreprise : "Didier SARL" envoyée</p>
+          <p>[08:45] ✅ Analyse statistique hebdo complétée</p>
+        </div>
+      </div>
+    </div>
+    <footer>
+      Central Brain — Assistant IA Agentique • Piloté par Erwann
+    </footer>
+  </main>
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const main = document.getElementById('main');
+      sidebar.classList.toggle('hidden');
+      main.classList.toggle('full');
+    }
+  </script>
+</body>
+</html>
